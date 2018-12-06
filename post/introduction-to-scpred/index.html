@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 2.4.0">
+  <meta name="generator" content="Hugo 0.52" />
+  <meta name="author" content="Jose Alquicira Hernandez">
+
+  
+  
+  
+  
+    
+  
+  <meta name="description" content="Summary scPred is a general method to predict cell types based on variance structure decomposition. It selects the most cell type-informative principal components from a dataset and trains a prediction model for each cell type. The principal training axes are projected onto the test dataset to obtain the PCs scores for the test dataset and the trained model(s) is/are used to classify single cells.
+For more details see our pre-print on bioRxiv:">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/post/introduction-to-scpred/">
+
+  
+
+
+  
+
+  
+  
+  
+  <meta name="theme-color" content="#4caf50">
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" integrity="sha256-ygkqlh3CYSUri3LhQxzdcm0n1EQvH2Y+U5S2idbLtxs=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" crossorigin="anonymous">
+        
+      
+    
+
+    
+
+    
+
+  
+
+  
+  
+  <link rel="stylesheet" href=//fonts.googleapis.com/css?family=Montserrat:400,700|Roboto:400,400italic,700|Roboto+Mono>
+  
+
+  <link rel="stylesheet" href="/styles.css">
+  
+
+  
+  
+  
+
+  
+  <link rel="alternate" href="/index.xml" type="application/rss+xml" title="Jose Alquicira Hernandez">
+  <link rel="feed" href="/index.xml" type="application/rss+xml" title="Jose Alquicira Hernandez">
+  
+
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="icon" type="image/png" href="/img/icon.png">
+  <link rel="apple-touch-icon" type="image/png" href="/img/icon-192.png">
+
+  <link rel="canonical" href="/post/introduction-to-scpred/">
+
+  <meta property="twitter:card" content="summary_large_image">
+  
+  <meta property="twitter:site" content="@josealquicirah">
+  <meta property="twitter:creator" content="@josealquicirah">
+  
+  <meta property="og:site_name" content="Jose Alquicira Hernandez">
+  <meta property="og:url" content="/post/introduction-to-scpred/">
+  <meta property="og:title" content="Introduction to scPred | Jose Alquicira Hernandez">
+  <meta property="og:description" content="Summary scPred is a general method to predict cell types based on variance structure decomposition. It selects the most cell type-informative principal components from a dataset and trains a prediction model for each cell type. The principal training axes are projected onto the test dataset to obtain the PCs scores for the test dataset and the trained model(s) is/are used to classify single cells.
+For more details see our pre-print on bioRxiv:">
+  
+  
+    
+  <meta property="og:image" content="/img/icon-192.png">
+  <meta property="og:locale" content="en-us">
+  
+  <meta property="article:published_time" content="2018-12-06T00:00:00&#43;00:00">
+  
+  <meta property="article:modified_time" content="2018-12-06T00:00:00&#43;00:00">
+  
+
+  
+
+  
+
+  <title>Introduction to scPred | Jose Alquicira Hernandez</title>
+
+</head>
+<body id="top" data-spy="scroll" data-target="#TableOfContents" data-offset="71" >
+
+<nav class="navbar navbar-light fixed-top navbar-expand-lg py-0" id="navbar-main">
+  <div class="container">
+
+    
+      <a class="navbar-brand" href="/">Jose Alquicira Hernandez</a>
+      
+      <button type="button" class="navbar-toggler" data-toggle="collapse"
+              data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span><i class="fas fa-bars"></i></span>
+      </button>
+      
+
+    
+    <div class="collapse navbar-collapse" id="navbar">
+
+      
+      
+      <ul class="navbar-nav ml-auto">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/#about">
+            
+            <span>Home</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/#publications_selected">
+            
+            <span>Publications</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/#posts">
+            
+            <span>Posts</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/tutorial/">
+            
+            <span>Tutorials</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link" href="/#contact">
+            
+            <span>Contact</span>
+            
+          </a>
+        </li>
+
+        
+        
+
+      
+
+        
+
+        
+      </ul>
+
+    </div>
+  </div>
+</nav>
+
+
+<article class="article" itemscope itemtype="http://schema.org/Article">
+
+  
+
+
+  <div class="article-container">
+    <h1 itemprop="name">Introduction to scPred</h1>
+
+    
+
+<div class="article-metadata">
+
+  
+  
+  <span itemscope itemprop="author" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Jose Alquicira Hernandez">
+  </span>
+  
+
+  <span class="article-date">
+    
+    <meta content="2018-12-06 00:00:00 &#43;0000 UTC" itemprop="datePublished">
+    <time datetime="2018-12-06 00:00:00 &#43;0000 UTC" itemprop="dateModified">
+      Dec 6, 2018
+    </time>
+  </span>
+  <span itemscope itemprop="publisher" itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Jose Alquicira Hernandez">
+  </span>
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    18 min read
+  </span>
+  
+
+  
+  
+
+  
+  
+  
+  
+
+  
+  
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    <li>
+      <a class="twitter"
+         href="https://twitter.com/intent/tweet?text=Introduction%20to%20scPred&amp;url=%2fpost%2fintroduction-to-scpred%2f"
+         target="_blank" rel="noopener">
+        <i class="fab fa-twitter"></i>
+      </a>
+    </li>
+    <li>
+      <a class="facebook"
+         href="https://www.facebook.com/sharer.php?u=%2fpost%2fintroduction-to-scpred%2f"
+         target="_blank" rel="noopener">
+        <i class="fab fa-facebook-f"></i>
+      </a>
+    </li>
+    <li>
+      <a class="linkedin"
+         href="https://www.linkedin.com/shareArticle?mini=true&amp;url=%2fpost%2fintroduction-to-scpred%2f&amp;title=Introduction%20to%20scPred"
+         target="_blank" rel="noopener">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+    </li>
+    <li>
+      <a class="weibo"
+         href="http://service.weibo.com/share/share.php?url=%2fpost%2fintroduction-to-scpred%2f&amp;title=Introduction%20to%20scPred"
+         target="_blank" rel="noopener">
+        <i class="fab fa-weibo"></i>
+      </a>
+    </li>
+    <li>
+      <a class="email"
+         href="mailto:?subject=Introduction%20to%20scPred&amp;body=%2fpost%2fintroduction-to-scpred%2f">
+        <i class="fas fa-envelope"></i>
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+  
+
+</div>
+
+
+    <div class="article-style" itemprop="articleBody">
+      
+
+
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<p><code>scPred</code> is a general method to predict cell types based on variance structure decomposition. It selects the most cell type-informative principal components from a dataset and trains a prediction model for each cell type. The principal training axes are projected onto the test dataset to obtain the PCs scores for the test dataset and the trained model(s) is/are used to classify single cells.</p>
+<p>For more details see our pre-print on <strong>bioRxiv</strong>:</p>
+<p><a href="https://www.biorxiv.org/content/early/2018/12/03/369538">scPred: Single cell prediction using singular value decomposition and machine learning classification</a></p>
+</div>
+<div id="application-of-scpred" class="section level1">
+<h1>Application of <code>scPred</code></h1>
+<p>First, we load the <code>scPred</code> package, and <code>tidyverse</code>.</p>
+<pre class="r"><code>library(&quot;scPred&quot;)
+library(&quot;tidyverse&quot;)</code></pre>
+<p>We will work with single cell data from pluripotent, blood, skin and neural cells sequenced at low coverage. For more details about the study, see <a href="https://www.ncbi.nlm.nih.gov/pubmed/25086649">Low-coverage single-cell mRNA sequencing reveals cellular heterogeneity and activated signaling pathways in developing cerebral cortex</a>.</p>
+<p>The count matrix and metadata may be obtained <a href="https://scrnaseq-public-datasets.s3.amazonaws.com/scater-objects/pollen.rds">here</a> from Hemberg’s <a href="https://hemberg-lab.github.io/scRNA.seq.datasets">lab</a>.</p>
+<p>Read the gene expression data (<code>SingleCellExperiment</code> object), calculate CPM values and extract metadata.</p>
+<pre class="r"><code>download.file(&quot;https://scrnaseq-public-datasets.s3.amazonaws.com/scater-objects/pollen.rds&quot;, destfile = &quot;~/Downloads/pollen.rds&quot;)</code></pre>
+<pre class="r"><code>require(&quot;SingleCellExperiment&quot;)
+pollen &lt;- readRDS(&quot;~/Downloads/pollen.rds&quot;)</code></pre>
+<pre class="r"><code>pollen_counts &lt;- normcounts(pollen)
+pollen_cpm  &lt;- apply(pollen_counts, 2, function(x) (x/sum(x))*1000000)
+pollen_metadata &lt;- as.data.frame(colData(pollen))</code></pre>
+<p>Let’s explore the cell type information</p>
+<pre class="r"><code>table(pollen_metadata$cell_type2)</code></pre>
+<pre><code>## 
+##       blood      dermal      neural pluripotent 
+##         113          99          65          24</code></pre>
+<p>A total of 301 cells are included in the dataset.</p>
+<p>For demostration purposes, we split a gene expression matrix into two groups (train and test datasets) based cell type information using the <code>createDataPartition()</code> function from the <code>caret</code> package (already loaded with <code>scPred</code>).</p>
+<p>The <strong>train</strong> partition will be used to train a prediction models for each cell type and finally, the models will be tested using the <strong>test</strong> partition.</p>
+<pre class="r"><code>set.seed(1234)
+i &lt;- createDataPartition(pollen_metadata$cell_type2, p = 0.70, list = FALSE)
+train_data &lt;- pollen_cpm[, i]
+test_data &lt;- pollen_cpm[, -i]
+
+train_info &lt;- pollen_metadata[i, , drop = FALSE]
+test_info &lt;- pollen_metadata[-i, , drop = FALSE]</code></pre>
+</div>
+<div id="training-step" class="section level1">
+<h1>Training step</h1>
+<div id="eigendecomposition" class="section level2">
+<h2>Eigendecomposition</h2>
+<p>The first part of the <code>scPred</code> algorithm consists on decomposing the gene expresion matrix of the training dataset to obtained a low dimensional space that can describe most of the variance of the dataset. The <code>eigenDecompose</code> function calculates the first <code>n</code> principal components and log-transforms the input gene expression values to stabilize the variance. It returns an <code>scPred</code> object.</p>
+<pre class="r"><code>set.seed(1234)
+scp &lt;- eigenDecompose(train_data, n = 10)</code></pre>
+<p>Then, we assign the metadata containing the cell type information. Row names in the metadata dataframe must match the row names from the eigendecompsed gene expression matrix.</p>
+<pre class="r"><code>scPred::metadata(scp) &lt;- train_info</code></pre>
+</div>
+<div id="feature-selection" class="section level2">
+<h2>Feature selection</h2>
+<p>Next, we select the principal components that explain the class identity of each cell type using the <code>getFeatureSpace</code> function. This function applies a Wilcoxcon rank sum test to determine the informative principal components according to a <strong>categorical variable</strong> variable. In this case, we want to predict the cell types in the <code>cell_type2</code> columns from the metadata. Run <code>?getFeatureSpace</code> for more details.</p>
+<pre class="r"><code>scp &lt;- getFeatureSpace(scp, pVar = &quot;cell_type2&quot;)</code></pre>
+<pre><code>## 
+## DONE!</code></pre>
+<p>The <code>features</code> slot contains the principal components that explain the class identity.</p>
+<ul>
+<li><strong>pValue</strong> contains the associated p-value for each principal component obtained using the Wilcoxon Rank sum test</li>
+<li><strong>pValueAdj</strong> is the adjusted p-value depending omn the correction criterion applied. By defauls a false discovery rate corrections is performed</li>
+<li><strong>expVar</strong> contrains the explained variance by each principal component</li>
+<li><strong>cumExpVar</strong> contains the cumulative variance explained</li>
+</ul>
+<p>All prrincipal components for each cell type are ranked by p-value.</p>
+<pre class="r"><code>scp@features</code></pre>
+<pre><code>## $blood
+##    PC       pValue    pValueAdj    expVar cumExpVar
+## 1 PC2 6.186072e-26 6.186072e-25 20.291116  20.29112
+## 2 PC5 3.594918e-10 1.797459e-09  8.573597  28.86471
+## 3 PC3 2.822222e-08 9.407408e-08 11.433759  40.29847
+## 4 PC4 2.866624e-07 7.166560e-07 10.080527  50.37900
+## 
+## $dermal
+##    PC       pValue    pValueAdj   expVar cumExpVar
+## 1 PC2 1.378227e-29 1.378227e-28 20.29112  20.29112
+## 2 PC1 1.300270e-09 6.501350e-09 26.21813  46.50925
+## 3 PC4 7.311207e-08 2.437069e-07 10.08053  56.58977
+## 4 PC6 2.872213e-05 7.180532e-05  7.26231  63.85208
+## 5 PC3 2.034155e-04 4.068310e-04 11.43376  75.28584
+## 
+## $neural
+##    PC       pValue    pValueAdj   expVar cumExpVar
+## 1 PC1 9.513036e-21 9.513036e-20 26.21813  26.21813
+## 2 PC4 1.103454e-15 5.517270e-15 10.08053  36.29866
+## 3 PC3 7.019078e-05 2.339693e-04 11.43376  47.73242
+## 
+## $pluripotent
+##     PC       pValue    pValueAdj    expVar cumExpVar
+## 1  PC6 8.590373e-12 8.590373e-11  7.262310   7.26231
+## 2  PC4 2.420729e-10 1.210364e-09 10.080527  17.34284
+## 3  PC5 1.797335e-08 5.991115e-08  8.573597  25.91643
+## 4  PC9 1.169709e-07 2.924273e-07  3.512692  29.42913
+## 5  PC8 9.169523e-05 1.833905e-04  4.313980  33.74311
+## 6 PC10 4.675783e-03 7.792971e-03  3.418549  37.16165
+## 7  PC3 1.065838e-02 1.522625e-02 11.433759  48.59541
+## 8  PC2 1.376060e-02 1.720075e-02 20.291116  68.88653</code></pre>
+<p>We can plot the principal components grouped by the prediction variable using the <code>plotEigen()</code> function</p>
+<pre class="r"><code>plotEigen(scp, group = &quot;cell_type2&quot;)</code></pre>
+<p><img src="/post/2018-12-06-introduction-to-scpred_files/figure-html/plot_pca-1.png" width="576" /></p>
+</div>
+<div id="model-training" class="section level2">
+<h2>Model training</h2>
+<p>We can now train prediction models for blood, dermal, neural, and pluripotent cell types.</p>
+<pre class="r"><code>scp &lt;- trainModel(scp, seed = 66)</code></pre>
+<p>If we print the <code>scPred</code> object we can look at a summary of the slots contained in it.</p>
+<ul>
+<li>Expression data: shows the number of cells, genes, and principal components computed.</li>
+<li>Metadata information: Show the columns in the metadata slot. If columns are factor objects, they can be used as response veriables to train a prediction model</li>
+<li>Prediction variable: Shows the prediction variable as indicated using the <code>getFeatureSpace()</code> function</li>
+<li>Informative PCs per class: shows the number of discriminant principal components for each class (e.g. cell type)</li>
+<li>Training: Shows the description of the classification model used for training. For each class, performance metrics such as AUROC,accuracy or kappa are shown</li>
+</ul>
+<p>The four models showed a specificity of <code>1</code> and a sensitivity of <code>0.99</code> to <code>1</code>.</p>
+<pre class="r"><code>scp</code></pre>
+<pre><code>## &#39;scPred&#39; object
+## 
+## - Expression data
+##       Cell embeddings =  213
+##       Gene loadings =  21413
+##       PCs =  10
+## 
+## - Metadata information
+##       cell_type1, cell_type2
+##       Prediction variable = cell_type2
+##              n
+## blood       80
+## dermal      70
+## neural      46
+## pluripotent 17
+## 
+## - Informative PCs per class
+##             Features
+## blood              4
+## dermal             5
+## neural             3
+## pluripotent        8
+## 
+## - Training information
+##       Model: Support Vector Machines with Radial Basis Function Kernel
+##             ROC Sens  Spec
+## blood       1   0.988 1   
+## dermal      1   1     1   
+## neural      1   1     1   
+## pluripotent 1   1     1</code></pre>
+<p>We can plot the distribution of probabilities to see the performance of the predictions for each cell class using</p>
+<p>The <code>getTrainResults()</code> function extracts the predictions results obtained from the resampling step for training the prediction model.</p>
+<pre class="r"><code>res &lt;- getTrainResults(scp)</code></pre>
+<p>We can plot the calculated probabilities for each cell type versus our cell labels:</p>
+<pre class="r"><code>plotTrainProbs(scp)</code></pre>
+<p><img src="/post/2018-12-06-introduction-to-scpred_files/figure-html/plot_train_probabilities-1.png" width="1248" /></p>
+<p>In the previous figure we can observe that a threshold of <code>0.9</code> classifies all <em>dermal</em>, <em>neural</em> and <em>pluripotent</em> cells correctly and almost all <em>blood</em> cells too. Each panel represents a prediction model and the colors the known true classes. All <em>other</em> cells are cells except the positive class (for example, for the blood prediction model all <em>other</em> cells are either <em>dermal</em>, <em>neural</em>, or <em>pluripotent</em>)</p>
+</div>
+</div>
+<div id="prediction-step" class="section level1">
+<h1>Prediction step</h1>
+<p>Once the models have been trained they can be applied to predict cell types in other dataset, for this demonstration we’ll use the <strong>test</strong> partition/ <code>scPredict()</code> projects the training principal axes onto the test dataset and predicts the cell identity using the trained models. By default, <code>scPredict()</code> uses a threshold of <code>0.9</code> to classify the cells into categories.</p>
+<pre class="r"><code>scp &lt;- scPredict(scp, newData = test_data, threshold = 0.9)</code></pre>
+<pre><code>## Predicting cell types</code></pre>
+<p><code>scPredict()</code> adds a dataframe with the probabilities of each cell to belong to any of the cell classes. The <code>predClass</code> columns is set using the provided threshold. Use <code>getPredictions</code> to obtain the prediction results</p>
+<pre class="r"><code>getPredictions(scp)</code></pre>
+<pre><code>##                    blood      dermal      neural pluripotent   predClass
+## Hi_2338_1    0.006655574 0.998660453 0.007440833 0.005008749      dermal
+## Hi_2338_2    0.005973183 0.997339365 0.007017599 0.004993949      dermal
+## Hi_2338_4    0.011011438 0.993270822 0.009921552 0.004863217      dermal
+## Hi_2338_5    0.017761575 0.995914310 0.006822524 0.003790517      dermal
+## Hi_2338_17   0.024224216 0.902759744 0.014851823 0.005114912      dermal
+## Hi_2339_7    0.993408005 0.012042407 0.008148723 0.005297627       blood
+## Hi_2339_8    0.997380247 0.007232218 0.005281070 0.005404905       blood
+## Hi_2339_9    0.964734320 0.006105625 0.013411268 0.005270132       blood
+## Hi_2339_11   0.993005444 0.007104105 0.004966572 0.005266716       blood
+## Hi_2339_14   0.965739837 0.038056046 0.006520396 0.005291290       blood
+## Hi_K562_2    0.995894429 0.005652630 0.002859333 0.003933956       blood
+## Hi_K562_4    0.989691640 0.007281384 0.009687081 0.004711426       blood
+## Hi_K562_10   0.988013653 0.006033125 0.002608131 0.004933491       blood
+## Hi_BJ_1      0.010147845 0.995365243 0.005814412 0.003934623      dermal
+## Hi_BJ_2      0.007979329 0.990617637 0.009042959 0.005142634      dermal
+## Hi_BJ_6      0.009356208 0.995618949 0.008309160 0.005081296      dermal
+## Hi_BJ_8      0.010222853 0.993650077 0.006426775 0.005213273      dermal
+## Hi_BJ_10     0.007288164 0.996559180 0.005883454 0.004426564      dermal
+## Hi_BJ_11     0.007089321 0.992122295 0.007084840 0.005234733      dermal
+## Hi_BJ_12     0.007945532 0.995737015 0.005083199 0.004575928      dermal
+## Hi_BJ_17     0.008009722 0.994678439 0.007570398 0.005267640      dermal
+## Hi_BJ_19     0.007158134 0.989414384 0.008616647 0.005318316      dermal
+## Hi_BJ_30     0.008399897 0.996345448 0.006304303 0.004977630      dermal
+## Hi_BJ_34     0.009390083 0.996917264 0.007515548 0.003791881      dermal
+## Hi_K562_19   0.994617229 0.006784354 0.009251010 0.004032127       blood
+## Hi_K562_20   0.953711538 0.008983164 0.004315662 0.004139086       blood
+## Hi_K562_22   0.994391053 0.005913928 0.004323663 0.004350141       blood
+## Hi_K562_23   0.996412632 0.005749871 0.005622456 0.004688460       blood
+## Hi_K562_25   0.994925606 0.005923280 0.004797062 0.004736955       blood
+## Hi_K562_31   0.996464299 0.005393526 0.003702113 0.004653050       blood
+## Hi_K562_34   0.995227159 0.006150064 0.005739733 0.005181145       blood
+## Hi_K562_36   0.996773580 0.005926799 0.006433327 0.004128915       blood
+## Hi_K562_38   0.995700707 0.005717990 0.003582286 0.004625779       blood
+## Hi_K562_40   0.995912496 0.005283276 0.002926409 0.004131597       blood
+## Hi_K562_41   0.996614506 0.005355295 0.004310329 0.004487103       blood
+## Hi_HL60_2    0.996008108 0.003203810 0.005795405 0.005781991       blood
+## Hi_HL60_4    0.986202938 0.002948087 0.016482828 0.004618730       blood
+## Hi_HL60_6    0.997596728 0.001202118 0.007585141 0.004881546       blood
+## Hi_HL60_7    0.982888385 0.006903896 0.009560793 0.005386941       blood
+## Hi_HL60_14   0.997717195 0.001131019 0.005303001 0.005319333       blood
+## Hi_HL60_15   0.995420209 0.007555687 0.008033794 0.005274040       blood
+## Hi_HL60_23   0.994897770 0.002550216 0.006079878 0.005537385       blood
+## Hi_HL60_33   0.996792166 0.004219183 0.006055872 0.005153092       blood
+## Hi_HL60_36   0.995829430 0.003149186 0.005590083 0.005020133       blood
+## Hi_HL60_37   0.996538603 0.006027821 0.008660022 0.005188622       blood
+## Hi_HL60_43   0.996048487 0.003662060 0.005691881 0.004947445       blood
+## Hi_HL60_48   0.996612696 0.004402476 0.007093712 0.005819822       blood
+## Hi_HL60_52   0.995951072 0.004375453 0.007077423 0.004929013       blood
+## Hi_HL60_54   0.997391250 0.003718601 0.006168916 0.005145309       blood
+## Hi_iPS_1     0.006773016 0.006315371 0.005107275 0.956066585 pluripotent
+## Hi_iPS_4     0.005459630 0.005991352 0.006274916 0.938805907 pluripotent
+## Hi_iPS_7     0.007263328 0.006166505 0.003852328 0.968535863 pluripotent
+## Hi_iPS_8     0.006315538 0.004690963 0.087484043 0.919976331 pluripotent
+## Hi_iPS_10    0.005696906 0.006815225 0.002949809 0.962067845 pluripotent
+## Hi_iPS_16    0.005472227 0.006513774 0.004396123 0.957438517 pluripotent
+## Hi_iPS_23    0.006540182 0.005926688 0.005573124 0.937271921 pluripotent
+## Hi_Kera_2    0.005790139 0.990108122 0.007238154 0.004516796      dermal
+## Hi_Kera_6    0.007670905 0.986628692 0.006459826 0.005081581      dermal
+## Hi_Kera_7    0.003594498 0.996075392 0.006550450 0.003735429      dermal
+## Hi_Kera_8    0.006915099 0.996701772 0.007179775 0.003988914      dermal
+## Hi_Kera_9    0.010128375 0.979702056 0.005616018 0.004241848      dermal
+## Hi_Kera_10   0.002340482 0.996582641 0.006275293 0.004080611      dermal
+## Hi_Kera_11   0.004360678 0.992117012 0.006753084 0.003618161      dermal
+## Hi_Kera_13   0.006507960 0.997093650 0.006786817 0.003808263      dermal
+## Hi_Kera_14   0.013371787 0.984571905 0.006841817 0.004315511      dermal
+## Hi_Kera_16   0.012030558 0.970493319 0.005210746 0.004419983      dermal
+## Hi_Kera_25   0.004569195 0.994097757 0.006362785 0.003744171      dermal
+## Hi_Kera_39   0.004015330 0.990008026 0.006202351 0.003942094      dermal
+## Hi_Kera_40   0.077702287 0.758051254 0.006991119 0.004444502  unassigned
+## Hi_GW21.2_2  0.005387813 0.005735801 0.997628545 0.004467574      neural
+## Hi_GW21.2_7  0.006159599 0.005077643 0.999277999 0.005481054      neural
+## Hi_GW21.2_8  0.007246919 0.005188322 0.999270411 0.006086767      neural
+## Hi_GW21.2_10 0.006596429 0.004754111 0.999664466 0.006450892      neural
+## Hi_GW21.2_13 0.007135911 0.005351180 0.998825375 0.006651554      neural
+## Hi_GW21.2_14 0.036515341 0.009006564 0.985959169 0.006464392      neural
+## Hi_GW21_3    0.006739270 0.003618348 0.999669848 0.004820192      neural
+## Hi_GW21_5    0.010231166 0.013654829 0.998429909 0.003903365      neural
+## Hi_NPC_3     0.004529544 0.005334441 0.998956256 0.004840688      neural
+## Hi_NPC_10    0.004695227 0.004655696 0.998736001 0.004358542      neural
+## Hi_NPC_13    0.005328657 0.004962464 0.993770313 0.006186660      neural
+## Hi_GW16_1    0.009173163 0.005942934 0.998591466 0.004733403      neural
+## Hi_GW16_2    0.012745847 0.006665138 0.996897389 0.004280930      neural
+## Hi_GW16_8    0.007429963 0.004603408 0.994664971 0.005579575      neural
+## Hi_GW16_9    0.009558793 0.007997607 0.997377036 0.003998157      neural
+## Hi_GW16_20   0.005432284 0.004486833 0.999827641 0.003163558      neural
+## Hi_GW16_23   0.024155920 0.004874453 0.999093780 0.004073243      neural
+## Hi_GW16_24   0.008210821 0.003561112 0.999554156 0.004285415      neural
+## Hi_GW16_26   0.008582737 0.007208059 0.998088158 0.003999236      neural</code></pre>
+<p>We can obtain a contingency table showing the prediction results versus the true cell type labels. First, we assign the metadata containing the true cell types to the <code>predMeta</code> slot</p>
+<pre class="r"><code>scp@predMeta &lt;- test_info</code></pre>
+<p>Then, we can use the <code>crossTab()</code> function to obtain the contingency table. The <code>true</code> parameter indicates the column in <code>predMeta</code> that contains the true labels.</p>
+<pre class="r"><code>crossTab(scp, true = &quot;cell_type2&quot;)</code></pre>
+<pre><code>##             blood dermal neural pluripotent
+## blood           1   0.00      0           0
+## dermal          0   0.97      0           0
+## neural          0   0.00      1           0
+## pluripotent     0   0.00      0           1
+## unassigned      0   0.03      0           0</code></pre>
+<p>The rows correspond to the prediction labels provided by <code>scPred</code> and the columns to the <code>true</code> column in <code>@predMeta</code> By default <code>crossTab</code> returns the proportion of cells classified for each possible group. Set <code>prop = FALSE</code> to get the cell counts instead of proportions.</p>
+<pre class="r"><code>crossTab(scp, true = &quot;cell_type2&quot;, prop = FALSE)</code></pre>
+<pre><code>##             blood dermal neural pluripotent
+## blood          33      0      0           0
+## dermal          0     28      0           0
+## neural          0      0     19           0
+## pluripotent     0      0      0           7
+## unassigned      0      1      0           0</code></pre>
+<p>We can plot the probabilities using the <code>plotPredProbs</code></p>
+<pre class="r"><code>plotPredProbs(scp)</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="/post/2018-12-06-introduction-to-scpred_files/figure-html/plot_prediction_porbs-1.png" width="864" /></p>
+<p>In the previous plot, each panel represents the predictions each cell type across the different models. Each distribution and its colors represent the cell type evaluated by each prediction model in <code>@train</code>. We can observe that all blood, neural and pluripotent cells were correctly classified using a threshold of <code>0.9</code>. Only one dermal cell was labeled as <strong>unassigned</strong> as it was below the threshold. This cell has a probability of <code>0.75</code> of being dermal.</p>
+</div>
+<div id="reproducibility" class="section level1">
+<h1>Reproducibility</h1>
+<pre class="r"><code>options(width = 70)
+devtools::session_info(include_base = TRUE)</code></pre>
+<pre><code>## ─ Session info ─────────────────────────────────────────────────────
+##  setting  value                       
+##  version  R version 3.5.1 (2018-07-02)
+##  os       macOS High Sierra 10.13.6   
+##  system   x86_64, darwin15.6.0        
+##  ui       X11                         
+##  language (EN)                        
+##  collate  en_AU.UTF-8                 
+##  ctype    en_AU.UTF-8                 
+##  tz       Australia/Sydney            
+##  date     2018-12-06                  
+## 
+## ─ Packages ─────────────────────────────────────────────────────────
+##  ! package              * version    date       lib source        
+##    abind                  1.4-5      2016-07-21 [1] CRAN (R 3.5.0)
+##    acepack                1.4.1      2016-10-29 [1] CRAN (R 3.5.0)
+##    ape                    5.2        2018-09-24 [1] CRAN (R 3.5.0)
+##    assertthat             0.2.0      2017-04-11 [1] CRAN (R 3.5.0)
+##    backports              1.1.2      2017-12-13 [1] CRAN (R 3.5.0)
+##    base                 * 3.5.1      2018-07-05 [?] local         
+##    base64enc              0.1-3      2015-07-28 [1] CRAN (R 3.5.0)
+##    bibtex                 0.4.2      2017-06-30 [1] CRAN (R 3.5.0)
+##    bindr                  0.1.1      2018-03-13 [1] CRAN (R 3.5.0)
+##    bindrcpp             * 0.2.2      2018-03-29 [1] CRAN (R 3.5.0)
+##    Biobase              * 2.42.0     2018-10-30 [1] Bioconductor  
+##    BiocGenerics         * 0.28.0     2018-10-30 [1] Bioconductor  
+##    BiocParallel         * 1.16.0     2018-10-30 [1] Bioconductor  
+##    bit                    1.1-14     2018-05-29 [1] CRAN (R 3.5.0)
+##    bit64                  0.9-7      2017-05-08 [1] CRAN (R 3.5.0)
+##    bitops                 1.0-6      2013-08-17 [1] CRAN (R 3.5.0)
+##    blogdown               0.9        2018-10-23 [1] CRAN (R 3.5.0)
+##    bookdown               0.8        2018-12-03 [1] CRAN (R 3.5.0)
+##    broom                  0.5.0      2018-07-17 [1] CRAN (R 3.5.0)
+##    callr                  3.0.0      2018-08-24 [1] CRAN (R 3.5.0)
+##    caret                * 6.0-80     2018-05-26 [1] CRAN (R 3.5.0)
+##    caTools                1.17.1.1   2018-07-20 [1] CRAN (R 3.5.0)
+##    cellranger             1.1.0      2016-07-27 [1] CRAN (R 3.5.0)
+##    checkmate              1.8.5      2017-10-24 [1] CRAN (R 3.5.0)
+##    class                  7.3-14     2015-08-30 [1] CRAN (R 3.5.1)
+##    cli                    1.0.1      2018-09-25 [1] CRAN (R 3.5.0)
+##    cluster                2.0.7-1    2018-04-13 [1] CRAN (R 3.5.0)
+##    codetools              0.2-15     2016-10-05 [1] CRAN (R 3.5.1)
+##    colorspace             1.3-2      2016-12-14 [1] CRAN (R 3.5.0)
+##  P compiler               3.5.1      2018-07-05 [1] local         
+##    cowplot                0.9.3      2018-07-15 [1] CRAN (R 3.5.0)
+##    crayon                 1.3.4      2017-09-16 [1] CRAN (R 3.5.0)
+##    CVST                   0.2-2      2018-05-26 [1] CRAN (R 3.5.0)
+##    data.table             1.11.8     2018-09-30 [1] CRAN (R 3.5.0)
+##  P datasets             * 3.5.1      2018-07-05 [1] local         
+##    ddalpha                1.3.4      2018-06-23 [1] CRAN (R 3.5.0)
+##    DelayedArray         * 0.8.0      2018-10-30 [1] Bioconductor  
+##    DEoptimR               1.0-8      2016-11-19 [1] CRAN (R 3.5.0)
+##    desc                   1.2.0      2018-05-01 [1] CRAN (R 3.5.0)
+##    devtools               2.0.1      2018-10-26 [1] CRAN (R 3.5.1)
+##    digest                 0.6.18     2018-10-10 [1] CRAN (R 3.5.0)
+##    dimRed                 0.1.0      2017-05-04 [1] CRAN (R 3.5.0)
+##    diptest                0.75-7     2016-12-05 [1] CRAN (R 3.5.0)
+##    doSNOW                 1.0.16     2017-12-13 [1] CRAN (R 3.5.0)
+##    dplyr                * 0.7.8      2018-11-10 [1] CRAN (R 3.5.0)
+##    DRR                    0.0.3      2018-01-06 [1] CRAN (R 3.5.0)
+##    dtw                    1.20-1     2018-05-18 [1] CRAN (R 3.5.0)
+##    evaluate               0.12       2018-10-09 [1] CRAN (R 3.5.0)
+##    fitdistrplus           1.0-11     2018-09-10 [1] CRAN (R 3.5.0)
+##    flexmix                2.3-14     2017-04-28 [1] CRAN (R 3.5.0)
+##    forcats              * 0.3.0      2018-02-19 [1] CRAN (R 3.5.0)
+##    foreach                1.4.4      2017-12-12 [1] CRAN (R 3.5.0)
+##    foreign                0.8-71     2018-07-20 [1] CRAN (R 3.5.0)
+##    Formula                1.2-3      2018-05-03 [1] CRAN (R 3.5.0)
+##    fpc                    2.1-11.1   2018-07-20 [1] CRAN (R 3.5.0)
+##    fs                     1.2.6      2018-08-23 [1] CRAN (R 3.5.0)
+##    gbRd                   0.4-11     2012-10-01 [1] CRAN (R 3.5.0)
+##    gdata                  2.18.0     2017-06-06 [1] CRAN (R 3.5.0)
+##    GenomeInfoDb         * 1.18.1     2018-11-12 [1] Bioconductor  
+##    GenomeInfoDbData       1.2.0      2018-11-07 [1] Bioconductor  
+##    GenomicRanges        * 1.34.0     2018-10-30 [1] Bioconductor  
+##    geometry               0.3-6      2015-09-09 [1] CRAN (R 3.5.0)
+##    ggplot2              * 3.1.0      2018-10-25 [1] CRAN (R 3.5.0)
+##    ggridges               0.5.1      2018-09-27 [1] CRAN (R 3.5.0)
+##    glue                   1.3.0      2018-07-17 [1] CRAN (R 3.5.0)
+##    gower                  0.1.2      2017-02-23 [1] CRAN (R 3.5.0)
+##    gplots                 3.0.1      2016-03-30 [1] CRAN (R 3.5.0)
+##  P graphics             * 3.5.1      2018-07-05 [1] local         
+##  P grDevices            * 3.5.1      2018-07-05 [1] local         
+##  P grid                   3.5.1      2018-07-05 [1] local         
+##    gridExtra              2.3        2017-09-09 [1] CRAN (R 3.5.0)
+##    gtable                 0.2.0      2016-02-26 [1] CRAN (R 3.5.0)
+##    gtools                 3.8.1      2018-06-26 [1] CRAN (R 3.5.0)
+##    haven                  1.1.2      2018-06-27 [1] CRAN (R 3.5.0)
+##    hdf5r                  1.0.1      2018-10-07 [1] CRAN (R 3.5.0)
+##    Hmisc                  4.1-1      2018-01-03 [1] CRAN (R 3.5.0)
+##    hms                    0.4.2      2018-03-10 [1] CRAN (R 3.5.0)
+##    htmlTable              1.12       2018-05-26 [1] CRAN (R 3.5.0)
+##    htmltools              0.3.6      2017-04-28 [1] CRAN (R 3.5.0)
+##    htmlwidgets            1.3        2018-09-30 [1] CRAN (R 3.5.0)
+##    httr                   1.3.1      2017-08-20 [1] CRAN (R 3.5.0)
+##    ica                    1.0-2      2018-05-24 [1] CRAN (R 3.5.0)
+##    igraph                 1.2.2      2018-07-27 [1] CRAN (R 3.5.0)
+##    ipred                  0.9-8      2018-11-05 [1] CRAN (R 3.5.0)
+##    IRanges              * 2.16.0     2018-10-30 [1] Bioconductor  
+##    irlba                * 2.3.2      2018-01-11 [1] CRAN (R 3.5.0)
+##    iterators              1.0.10     2018-07-13 [1] CRAN (R 3.5.0)
+##    jsonlite               1.5        2017-06-01 [1] CRAN (R 3.5.0)
+##    kernlab              * 0.9-27     2018-08-10 [1] CRAN (R 3.5.0)
+##    KernSmooth             2.23-15    2015-06-29 [1] CRAN (R 3.5.1)
+##    knitr                  1.20       2018-02-20 [1] CRAN (R 3.5.0)
+##    labeling               0.3        2014-08-23 [1] CRAN (R 3.5.0)
+##    lars                   1.2        2013-04-24 [1] CRAN (R 3.5.0)
+##    lattice              * 0.20-38    2018-11-04 [1] CRAN (R 3.5.0)
+##    latticeExtra           0.6-28     2016-02-09 [1] CRAN (R 3.5.0)
+##    lava                   1.6.3      2018-08-10 [1] CRAN (R 3.5.0)
+##    lazyeval               0.2.1      2017-10-29 [1] CRAN (R 3.5.0)
+##    lmtest                 0.9-36     2018-04-04 [1] CRAN (R 3.5.0)
+##    lsei                   1.2-0      2017-10-23 [1] CRAN (R 3.5.0)
+##    lubridate              1.7.4      2018-04-11 [1] CRAN (R 3.5.0)
+##    magic                  1.5-9      2018-09-17 [1] CRAN (R 3.5.0)
+##    magrittr               1.5        2014-11-22 [1] CRAN (R 3.5.0)
+##    MASS                   7.3-51.1   2018-11-01 [1] CRAN (R 3.5.0)
+##    Matrix               * 1.2-15     2018-11-01 [1] CRAN (R 3.5.0)
+##    matrixStats          * 0.54.0     2018-07-23 [1] CRAN (R 3.5.0)
+##    mclust                 5.4.2      2018-11-17 [1] CRAN (R 3.5.0)
+##    memoise                1.1.0      2017-04-21 [1] CRAN (R 3.5.0)
+##    metap                  1.0        2018-07-25 [1] CRAN (R 3.5.0)
+##  P methods              * 3.5.1      2018-07-05 [1] local         
+##    mixtools               1.1.0      2017-03-10 [1] CRAN (R 3.5.0)
+##    ModelMetrics           1.2.2      2018-11-03 [1] CRAN (R 3.5.0)
+##    modelr                 0.1.2      2018-05-11 [1] CRAN (R 3.5.0)
+##    modeltools             0.2-22     2018-07-16 [1] CRAN (R 3.5.0)
+##    munsell                0.5.0      2018-06-12 [1] CRAN (R 3.5.0)
+##    mvtnorm                1.0-8      2018-05-31 [1] CRAN (R 3.5.0)
+##    nlme                   3.1-137    2018-04-07 [1] CRAN (R 3.5.1)
+##    nnet                   7.3-12     2016-02-02 [1] CRAN (R 3.5.1)
+##    npsurv                 0.4-0      2017-10-14 [1] CRAN (R 3.5.0)
+##  P parallel             * 3.5.1      2018-07-05 [1] local         
+##    pbapply                1.3-4      2018-01-10 [1] CRAN (R 3.5.0)
+##    pillar                 1.3.0      2018-07-14 [1] CRAN (R 3.5.0)
+##    pkgbuild               1.0.2      2018-10-16 [1] CRAN (R 3.5.1)
+##    pkgconfig              2.0.2      2018-08-16 [1] CRAN (R 3.5.0)
+##    pkgload                1.0.2      2018-10-29 [1] CRAN (R 3.5.0)
+##    pls                    2.7-0      2018-08-21 [1] CRAN (R 3.5.0)
+##    plyr                   1.8.4      2016-06-08 [1] CRAN (R 3.5.0)
+##    png                    0.1-7      2013-12-03 [1] CRAN (R 3.5.0)
+##    prabclus               2.2-6      2015-01-14 [1] CRAN (R 3.5.0)
+##    prettyunits            1.0.2      2015-07-13 [1] CRAN (R 3.5.0)
+##    processx               3.2.0      2018-08-16 [1] CRAN (R 3.5.0)
+##    prodlim                2018.04.18 2018-04-18 [1] CRAN (R 3.5.0)
+##    proxy                  0.4-22     2018-04-08 [1] CRAN (R 3.5.0)
+##    ps                     1.2.1      2018-11-06 [1] CRAN (R 3.5.0)
+##    purrr                * 0.2.5      2018-05-29 [1] CRAN (R 3.5.0)
+##    R.methodsS3            1.7.1      2016-02-16 [1] CRAN (R 3.5.0)
+##    R.oo                   1.22.0     2018-04-22 [1] CRAN (R 3.5.0)
+##    R.utils                2.7.0      2018-08-27 [1] CRAN (R 3.5.0)
+##    R6                     2.3.0      2018-10-04 [1] CRAN (R 3.5.0)
+##    RANN                   2.6        2018-07-16 [1] CRAN (R 3.5.0)
+##    RColorBrewer           1.1-2      2014-12-07 [1] CRAN (R 3.5.0)
+##    Rcpp                   1.0.0      2018-11-07 [1] CRAN (R 3.5.0)
+##    RcppRoll               0.3.0      2018-06-05 [1] CRAN (R 3.5.0)
+##    RCurl                  1.95-4.11  2018-07-15 [1] CRAN (R 3.5.0)
+##    Rdpack                 0.10-1     2018-10-04 [1] CRAN (R 3.5.0)
+##    readr                * 1.1.1      2017-05-16 [1] CRAN (R 3.5.0)
+##    readxl                 1.1.0      2018-04-20 [1] CRAN (R 3.5.0)
+##    recipes                0.1.3      2018-06-16 [1] CRAN (R 3.5.0)
+##    remotes                2.0.2      2018-10-30 [1] CRAN (R 3.5.1)
+##    reshape2               1.4.3      2017-12-11 [1] CRAN (R 3.5.0)
+##    reticulate             1.10       2018-08-05 [1] CRAN (R 3.5.0)
+##    rlang                  0.3.0.1    2018-10-25 [1] CRAN (R 3.5.0)
+##    rmarkdown              1.10       2018-06-11 [1] CRAN (R 3.5.0)
+##    robustbase             0.93-3     2018-09-21 [1] CRAN (R 3.5.0)
+##    ROCR                   1.0-7      2015-03-26 [1] CRAN (R 3.5.0)
+##    rpart                  4.1-13     2018-02-23 [1] CRAN (R 3.5.1)
+##    rprojroot              1.3-2      2018-01-03 [1] CRAN (R 3.5.0)
+##    rstudioapi             0.8        2018-10-02 [1] CRAN (R 3.5.0)
+##    Rtsne                  0.15       2018-11-10 [1] CRAN (R 3.5.0)
+##    rvest                  0.3.2      2016-06-17 [1] CRAN (R 3.5.0)
+##    S4Vectors            * 0.20.1     2018-11-09 [1] Bioconductor  
+##    scales                 1.0.0      2018-08-09 [1] CRAN (R 3.5.0)
+##    scPred               * 0.0.0.9000 2018-12-06 [1] local         
+##    SDMTools               1.1-221    2014-08-05 [1] CRAN (R 3.5.0)
+##    segmented              0.5-3.0    2017-11-30 [1] CRAN (R 3.5.0)
+##    sessioninfo            1.1.1      2018-11-05 [1] CRAN (R 3.5.0)
+##    Seurat                 2.3.4      2018-07-17 [1] CRAN (R 3.5.0)
+##    sfsmisc                1.1-2      2018-03-05 [1] CRAN (R 3.5.0)
+##    SingleCellExperiment * 1.4.0      2018-10-30 [1] Bioconductor  
+##    snow                   0.4-3      2018-09-14 [1] CRAN (R 3.5.0)
+##  P splines                3.5.1      2018-07-05 [1] local         
+##  P stats                * 3.5.1      2018-07-05 [1] local         
+##  P stats4               * 3.5.1      2018-07-05 [1] local         
+##    stringi                1.2.4      2018-07-20 [1] CRAN (R 3.5.0)
+##    stringr              * 1.3.1      2018-05-10 [1] CRAN (R 3.5.0)
+##    SummarizedExperiment * 1.12.0     2018-10-30 [1] Bioconductor  
+##    survival               2.43-1     2018-10-29 [1] CRAN (R 3.5.0)
+##    tibble               * 1.4.2      2018-01-22 [1] CRAN (R 3.5.0)
+##    tidyr                * 0.8.2      2018-10-28 [1] CRAN (R 3.5.0)
+##    tidyselect             0.2.5      2018-10-11 [1] CRAN (R 3.5.0)
+##    tidyverse            * 1.2.1      2017-11-14 [1] CRAN (R 3.5.0)
+##    timeDate               3043.102   2018-02-21 [1] CRAN (R 3.5.0)
+##  P tools                  3.5.1      2018-07-05 [1] local         
+##    trimcluster            0.1-2.1    2018-07-20 [1] CRAN (R 3.5.0)
+##    tsne                   0.1-3      2016-07-15 [1] CRAN (R 3.5.0)
+##    usethis                1.4.0      2018-08-14 [1] CRAN (R 3.5.0)
+##  P utils                * 3.5.1      2018-07-05 [1] local         
+##    withr                  2.1.2      2018-03-15 [1] CRAN (R 3.5.0)
+##    xfun                   0.4        2018-10-23 [1] CRAN (R 3.5.0)
+##    xml2                   1.2.0      2018-01-24 [1] CRAN (R 3.5.0)
+##    XVector                0.22.0     2018-10-30 [1] Bioconductor  
+##    yaml                   2.2.0      2018-07-25 [1] CRAN (R 3.5.0)
+##    zlibbioc               1.28.0     2018-10-30 [1] Bioconductor  
+##    zoo                    1.8-4      2018-09-19 [1] CRAN (R 3.5.0)
+## 
+## [1] /Library/Frameworks/R.framework/Versions/3.5/Resources/library
+## 
+##  P ── Loaded and on-disk path mismatch.</code></pre>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+    
+    
+
+    
+
+    
+
+
+  </div>
+</article>
+
+<div class="container">
+  <footer class="site-footer">
+  
+  <p class="powered-by">
+    <a href="/privacy/">Privacy Policy</a>
+  </p>
+  
+
+  <p class="powered-by">
+    &copy; 2018 &middot; 
+
+    Powered by the
+    <a href="https://sourcethemes.com/academic/" target="_blank" rel="noopener">Academic theme</a> for
+    <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>.
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" id="back_to_top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+</div>
+
+
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha512-+NqPlbbtM1QqiK8ZAo4Yrj2c4lNQoGv8P79DPtKzj++l5jnN39rHA/xsqn8zE9l0uSoxaCdrOgFs6yjyfbBxSg==" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.3/imagesloaded.pkgd.min.js" integrity="sha512-umsR78NN0D23AzgoZ11K7raBD+R6hqKojyBZs1w8WvYlsI+QuKRGBx3LFCwhatzBunCjDuJpDHwxD13sLMbpRA==" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha256-VsEqElsCHSGmnmHXGQzvoWjWwoznFSZc6hs7ARLRacQ=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.4/isotope.pkgd.min.js" integrity="sha512-VDBOIlDbuC4VWxGJNmuFRQ0Li0SKkDpmGyuhAG5LTDLd/dJ/S0WMVxriR2Y+CyPL5gzjpN4f/6iqWVBJlht0tQ==" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" integrity="sha256-X5PoE3KU5l+JcX+w09p/wHl9AzK333C4hJ2I9S5mD4M=" crossorigin="anonymous"></script>
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+        
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+        
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/python.min.js"></script>
+        
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/bash.min.js"></script>
+        
+      
+
+      
+      
+    
+
+    <script src="/js/hugo-academic.js"></script>
+    
+
+    
+    
+
+    
+    
+    
+
+    
+    
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    
+    
+    <script>
+      const search_index_filename = "/index.json";
+      const i18n = {
+        'placeholder': "Search...",
+        'results': "Search Results",
+        'no_results': "No results found"
+      };
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    <script src="/js/search.js"></script>
+    
+
+    
+    
+
+  </body>
+</html>
+
