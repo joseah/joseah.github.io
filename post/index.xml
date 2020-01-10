@@ -7,19 +7,41 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018</copyright>
-    <lastBuildDate>Sun, 01 Jan 2017 00:00:00 +1100</lastBuildDate>
+    <lastBuildDate>Sun, 01 Jan 2017 00:00:00 -0600</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Introduction to scPred</title>
+      <link>/post/introduction-to-scpred/</link>
+      <pubDate>Fri, 10 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/introduction-to-scpred/</guid>
+      <description>Summary scPred is a general method to predict cell types based on variance structure decomposition. It selects the most cell type-informative principal components from a dataset and trains a prediction model for each cell type. The principal training axes are projected onto the test dataset to obtain the PCs scores for the test dataset and the trained model(s) is/are used to classify single cells.
+For more details see our paper in Genome Biology:</description>
+    </item>
+    
+    <item>
+      <title>scPred integration with Seurat</title>
+      <link>/post/scpred-integration-with-seurat/</link>
+      <pubDate>Wed, 16 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/scpred-integration-with-seurat/</guid>
+      <description>In this tutorial, I’ll show how to incorporate prediction analyses using Seurat along with scPred.
+First, we’ll load scPred and the tidyverse:
+library(scPred) library(tidyverse) Let’s load Seurat:
+library(Seurat) We’ll work with a dataset obtained to analyze the ventral midbrain development in human (see Molecular Diversity of Midbrain Development in Mouse, Human, and Stem Cells). The data will be downloaded from Hemberg’s lab:
+download.file(&amp;quot;https://scrnaseq-public-datasets.s3.amazonaws.com/scater-objects/manno_human.rds&amp;quot;, destfile = &amp;quot;~/Downloads/manno_human.rds&amp;quot;) Then we import the data and convert the scater object into Seurat</description>
+    </item>
+    
+    <item>
       <title>My first post</title>
       <link>/post/getting-started/</link>
-      <pubDate>Thu, 27 Sep 2018 20:00:00 +1000</pubDate>
+      <pubDate>Thu, 27 Sep 2018 20:00:00 -0500</pubDate>
       
       <guid>/post/getting-started/</guid>
-      <description>I will periodically post articles related to genomics, computational biology, statistics and R.
-I hope you have fun!</description>
+      <description>My first post in this website</description>
     </item>
     
   </channel>

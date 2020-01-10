@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="generator" content="Source Themes Academic 2.4.0">
-  <meta name="generator" content="Hugo 0.48" />
+  <meta name="generator" content="Hugo 0.56.1" />
   <meta name="author" content="Jose Alquicira Hernandez">
 
   
@@ -15,7 +15,7 @@
   
     
   
-  <meta name="description" content="Single-cell RNA sequencing has enabled the characterization of highly specific cell types in many human tissues, as well as both primary and stem cell-derived cell lines. An important facet of these studies is the ability to identify the transcriptional signatures that define a cell type or state. In theory, this information can be used to classify an unknown cell based on its transcriptional profile; and clearly, the ability to accurately predict a cell type and any pathologic-related state will play a critical role in the early diagnosis of disease and decisions around the personalized treatment for patients. Here we present a new generalizable method (scPred) for prediction of cell type(s), using a combination of unbiased feature selection from a reduced-dimension space, and machine-learning classification. scPred solves several problems associated with the identification of individual gene feature selection and is able to capture subtle effects of many genes, increasing the overall variance explained by the model, and correspondingly improving the prediction accuracy. We apply scPred to scRNA-seq data from pancreatic tissue, colorectal tumor biopsies, and circulating dendritic cells, and show that scPred is able to classify cell subtypes with an accuracy of 96.1-99.2%. Furthermore, we demonstrate that the feature selection step of scPred is able to discriminate from both transcriptional variation between single-cell RNA-sequencing protocols, and between laboratory batch effects, and still predict cell subtype with an accuracy greater the 96%. Collectively, our results demonstrate the utility of scPred as a single cell prediction method that can be used for a wide variety of applications. The generalized method is implemented in software available here: https://github.com/IMB-Computational-Genomics-Lab/scPred/">
+  <meta name="description" content="Single-cell RNA sequencing has enabled the characterization of highly specific cell types in many tissues, as well as both primary and stem cell-derived cell lines. An important facet of these studies is the ability to identify the transcriptional signatures that define a cell type or state. In theory, this information can be used to classify an individual cell based on its transcriptional profile. Here, we present scPred, a new generalizable method that is able to provide highly accurate classification of single cells, using a combination of unbiased feature selection from a reduced-dimension space, and machine-learning probability-based prediction method. We apply scPred to scRNA-seq data from pancreatic tissue, mononuclear cells, colorectal tumor biopsies, and circulating dendritic cells and show that scPred is able to classify individual cells with high accuracy. The generalized method is available at https://github.com/powellgenomicslab/scPred">
 
   
   <link rel="alternate" hreflang="en-us" href="/publication/scpred/">
@@ -92,16 +92,16 @@
   <meta property="og:site_name" content="Jose Alquicira Hernandez">
   <meta property="og:url" content="/publication/scpred/">
   <meta property="og:title" content="scPred: Cell type prediction at single cell resolution | Jose Alquicira Hernandez">
-  <meta property="og:description" content="Single-cell RNA sequencing has enabled the characterization of highly specific cell types in many human tissues, as well as both primary and stem cell-derived cell lines. An important facet of these studies is the ability to identify the transcriptional signatures that define a cell type or state. In theory, this information can be used to classify an unknown cell based on its transcriptional profile; and clearly, the ability to accurately predict a cell type and any pathologic-related state will play a critical role in the early diagnosis of disease and decisions around the personalized treatment for patients. Here we present a new generalizable method (scPred) for prediction of cell type(s), using a combination of unbiased feature selection from a reduced-dimension space, and machine-learning classification. scPred solves several problems associated with the identification of individual gene feature selection and is able to capture subtle effects of many genes, increasing the overall variance explained by the model, and correspondingly improving the prediction accuracy. We apply scPred to scRNA-seq data from pancreatic tissue, colorectal tumor biopsies, and circulating dendritic cells, and show that scPred is able to classify cell subtypes with an accuracy of 96.1-99.2%. Furthermore, we demonstrate that the feature selection step of scPred is able to discriminate from both transcriptional variation between single-cell RNA-sequencing protocols, and between laboratory batch effects, and still predict cell subtype with an accuracy greater the 96%. Collectively, our results demonstrate the utility of scPred as a single cell prediction method that can be used for a wide variety of applications. The generalized method is implemented in software available here: https://github.com/IMB-Computational-Genomics-Lab/scPred/">
+  <meta property="og:description" content="Single-cell RNA sequencing has enabled the characterization of highly specific cell types in many tissues, as well as both primary and stem cell-derived cell lines. An important facet of these studies is the ability to identify the transcriptional signatures that define a cell type or state. In theory, this information can be used to classify an individual cell based on its transcriptional profile. Here, we present scPred, a new generalizable method that is able to provide highly accurate classification of single cells, using a combination of unbiased feature selection from a reduced-dimension space, and machine-learning probability-based prediction method. We apply scPred to scRNA-seq data from pancreatic tissue, mononuclear cells, colorectal tumor biopsies, and circulating dendritic cells and show that scPred is able to classify individual cells with high accuracy. The generalized method is available at https://github.com/powellgenomicslab/scPred">
   
   
     
   <meta property="og:image" content="/img/icon-192.png">
   <meta property="og:locale" content="en-us">
   
-  <meta property="article:published_time" content="2018-09-01T00:00:00&#43;10:00">
+  <meta property="article:published_time" content="2019-12-12T00:00:00-06:00">
   
-  <meta property="article:modified_time" content="2018-09-01T00:00:00&#43;10:00">
+  <meta property="article:modified_time" content="2019-12-12T00:00:00-06:00">
   
 
   
@@ -199,25 +199,6 @@
         
 
         <li class="nav-item">
-          <a class="nav-link" href="/tutorial/">
-            
-            <span>Tutorials</span>
-            
-          </a>
-        </li>
-
-        
-        
-
-        
-
-        
-        
-        
-          
-        
-
-        <li class="nav-item">
           <a class="nav-link" href="/#contact">
             
             <span>Contact</span>
@@ -248,7 +229,7 @@
     <h1 itemprop="name">scPred: Cell type prediction at single cell resolution</h1>
     <span class="pub-authors" itemprop="author">
       
-      <strong>Jose Alquicira Hernandez</strong>, Quan Nguyen, Joseph Powell
+      <strong>Jose Alquicira Hernandez</strong>, Anuja Sathe, Hanlee P. Ji, Quan Nguyen, Joseph Powell
       
     </span>
     <span class="float-right">
@@ -299,7 +280,7 @@
 
     
     <h3>Abstract</h3>
-    <p class="pub-abstract" itemprop="text">Single-cell RNA sequencing has enabled the characterization of highly specific cell types in many human tissues, as well as both primary and stem cell-derived cell lines. An important facet of these studies is the ability to identify the transcriptional signatures that define a cell type or state. In theory, this information can be used to classify an unknown cell based on its transcriptional profile; and clearly, the ability to accurately predict a cell type and any pathologic-related state will play a critical role in the early diagnosis of disease and decisions around the personalized treatment for patients. Here we present a new generalizable method (scPred) for prediction of cell type(s), using a combination of unbiased feature selection from a reduced-dimension space, and machine-learning classification. scPred solves several problems associated with the identification of individual gene feature selection and is able to capture subtle effects of many genes, increasing the overall variance explained by the model, and correspondingly improving the prediction accuracy. We apply scPred to scRNA-seq data from pancreatic tissue, colorectal tumor biopsies, and circulating dendritic cells, and show that scPred is able to classify cell subtypes with an accuracy of 96.1-99.2%. Furthermore, we demonstrate that the feature selection step of scPred is able to discriminate from both transcriptional variation between single-cell RNA-sequencing protocols, and between laboratory batch effects, and still predict cell subtype with an accuracy greater the 96%. Collectively, our results demonstrate the utility of scPred as a single cell prediction method that can be used for a wide variety of applications. The generalized method is implemented in software available here: <a href="https://github.com/IMB-Computational-Genomics-Lab/scPred/" target="_blank">https://github.com/IMB-Computational-Genomics-Lab/scPred/</a></p>
+    <p class="pub-abstract" itemprop="text">Single-cell RNA sequencing has enabled the characterization of highly specific cell types in many tissues, as well as both primary and stem cell-derived cell lines. An important facet of these studies is the ability to identify the transcriptional signatures that define a cell type or state. In theory, this information can be used to classify an individual cell based on its transcriptional profile. Here, we present scPred, a new generalizable method that is able to provide highly accurate classification of single cells, using a combination of unbiased feature selection from a reduced-dimension space, and machine-learning probability-based prediction method. We apply scPred to scRNA-seq data from pancreatic tissue, mononuclear cells, colorectal tumor biopsies, and circulating dendritic cells and show that scPred is able to classify individual cells with high accuracy. The generalized method is available at <a href="https://github.com/powellgenomicslab/scPred" target="_blank">https://github.com/powellgenomicslab/scPred</a></p>
     
 
     
@@ -328,7 +309,7 @@
       <div class="col-md-10">
         <div class="row">
           <div class="col-12 col-md-3 pub-row-heading">Publication</div>
-          <div class="col-12 col-md-9">BioRxiv</div>
+          <div class="col-12 col-md-9">Genome Biology</div>
         </div>
       </div>
       <div class="col-md-1"></div>
@@ -342,7 +323,7 @@
         <div class="row">
           <div class="col-12 col-md-3 pub-row-heading">Date</div>
           <div class="col-12 col-md-9" itemprop="datePublished">
-            September, 2018
+            December, 2019
           </div>
         </div>
       </div>
@@ -361,10 +342,10 @@
 
 
 
-<a class="btn btn-outline-primary my-1 mr-1" href="https://www.biorxiv.org/content/early/2018/07/15/369538" target="_blank" rel="noopener">
-  Preprint
-</a>
 
+<a class="btn btn-outline-primary my-1 mr-1" href="https://genomebiology.biomedcentral.com/track/pdf/10.1186/s13059-019-1862-5" target="_blank" rel="noopener">
+  PDF
+</a>
 
 
 
@@ -395,8 +376,7 @@
 
     <div class="space-below"></div>
 
-    <div class="article-style"><p>More detail can easily be written here using <em>Markdown</em> and $\rm \LaTeX$ math code.</p>
-</div>
+    <div class="article-style"></div>
 
     
 

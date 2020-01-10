@@ -7,7 +7,7 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>&amp;copy; 2018</copyright>
-    <lastBuildDate>Thu, 01 Dec 2016 00:00:00 +1100</lastBuildDate>
+    <lastBuildDate>Thu, 01 Dec 2016 00:00:00 -0600</lastBuildDate>
     
 	<atom:link href="/publication_types/2/index.xml" rel="self" type="application/rss+xml" />
     
@@ -15,7 +15,7 @@
     <item>
       <title>Human splicing diversity and the extent of unannotated splice junctions across human RNA-seq samples on the Sequence Read Archive</title>
       <link>/publication/human_splicing_diversity/</link>
-      <pubDate>Thu, 01 Dec 2016 00:00:00 +1100</pubDate>
+      <pubDate>Thu, 01 Dec 2016 00:00:00 -0600</pubDate>
       
       <guid>/publication/human_splicing_diversity/</guid>
       <description>More detail can easily be written here using Markdown and $\rm \LaTeX$ math code.</description>
@@ -24,7 +24,7 @@
     <item>
       <title>Rail-RNA: scalable analysis of RNA-seq splicing and coverage</title>
       <link>/publication/rail/</link>
-      <pubDate>Thu, 01 Sep 2016 00:00:00 +1000</pubDate>
+      <pubDate>Thu, 01 Sep 2016 00:00:00 -0500</pubDate>
       
       <guid>/publication/rail/</guid>
       <description>More detail can easily be written here using Markdown and $\rm \LaTeX$ math code.</description>
